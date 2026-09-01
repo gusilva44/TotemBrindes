@@ -1,0 +1,22 @@
+.header {
+    
+    width: 100%;
+    padding-top: 20px;
+
+    .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    img {
+        width: 75px;
+    }
+
+    h1 {
+        font-size: 1.3em;
+        color: white;
+        font-weight: bolder;
+    }
+}
