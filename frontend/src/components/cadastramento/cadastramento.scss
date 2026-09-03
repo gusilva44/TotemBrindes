@@ -1,0 +1,49 @@
+.cadastramento {
+  display: flex;
+  align-items: center;
+  width: 80%;
+
+  form {
+    display: flex;
+    flex-direction: column; // Alterado para coluna para os inputs ficarem um abaixo do outro
+    align-items: center;
+    width: 100%;
+
+    .inputs {
+      display: flex;
+      flex-direction: column;
+      width: 75%; // Alinha a largura dos inputs com a do botão
+      margin-bottom: 15px;
+
+      label {
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      input, select {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+      }
+    }
+
+    .proximaPagina {
+      font-size: 20px;
+      padding: 15px;
+      background-color: #e7a41c;
+      color: #002677;
+      width: 75%;
+      margin-top: 15px;
+      margin-bottom: 25px;
+      border-radius: 20px;
+      text-align: center;
+      border: none; // Remove a borda padrão do input botão
+      cursor: pointer; // Adiciona a mãozinha de clique
+      font-weight: bold;
+      box-shadow: 3px 3px 20px 1px black;
+      transition: background-color 0.2s ease;
+
+      
+    }
+  }
+}
