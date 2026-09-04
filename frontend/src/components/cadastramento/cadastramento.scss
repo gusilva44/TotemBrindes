@@ -1,49 +1,88 @@
 .cadastramento {
   display: flex;
   align-items: center;
-  width: 80%;
+  justify-content: center;
+  width: 100%;
+  padding: 25px 20px;
+  box-sizing: border-box;
 
   form {
     display: flex;
-    flex-direction: column; // Alterado para coluna para os inputs ficarem um abaixo do outro
+    flex-direction: column;
     align-items: center;
     width: 100%;
+    max-width: 450px;
+    gap: 18px;
 
     .inputs {
       display: flex;
       flex-direction: column;
-      width: 75%; // Alinha a largura dos inputs com a do botão
-      margin-bottom: 15px;
+      gap: 7px;
+      width: 100%;
 
       label {
-        margin-bottom: 5px;
-        font-weight: bold;
+        font-size: 18px;
+        font-weight: 600;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
       }
 
-      input, select {
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
+      input,
+      select {
+        box-sizing: border-box;
+        width: 100%;
+        height: 48px;
+        padding: 0 14px;
+
+        font-size: 16px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #303030;
+
+        background-color: white;
+        border: 2px solid transparent;
+        border-radius: 10px;
+        outline: none;
+
+        transition: 0.2s;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: #ff9409;
+        box-shadow: 0 0 0 3px rgba(255, 148, 9, 0.2);
+      }
+
+      input::placeholder {
+        color: #888;
+      }
+
+      select {
+        cursor: pointer;
       }
     }
 
     .proximaPagina {
-      font-size: 20px;
-      padding: 15px;
-      background-color: #e7a41c;
-      color: #002677;
-      width: 75%;
-      margin-top: 15px;
-      margin-bottom: 25px;
-      border-radius: 20px;
-      text-align: center;
-      border: none; // Remove a borda padrão do input botão
-      cursor: pointer; // Adiciona a mãozinha de clique
-      font-weight: bold;
-      box-shadow: 3px 3px 20px 1px black;
-      transition: background-color 0.2s ease;
+      width: 100%;
+      height: 52px;
 
-      
+      margin-top: 8px;
+
+      background-color: #ff9409;
+      color: #000000;
+
+      border: none;
+      border-radius: 12px;
+
+      font-size: 18px;
+      font-weight: bold;
+
+      cursor: pointer;
+      transition: 0.2s;
     }
-  }
+
+    .proximaPagina:active {
+      transform: scale(0.98);
+      background-color: #e98300;
+    }
+  } 
 }

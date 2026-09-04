@@ -1,0 +1,31 @@
+.produtos-componente {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    
+    .brinde {
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        border: 1px solid black;
+
+        .brinde-img {
+            width: 100%;
+
+            img {
+                width: 100%;
+            }
+        }
+
+
+        .brinde-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}

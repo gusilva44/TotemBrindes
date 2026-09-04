@@ -1,7 +1,12 @@
 .cadastramento-page {
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
     align-items: center;
     flex-direction: column;
     height: 100vh;
+    gap: 0px;
+
+    Header {
+        margin-bottom: 20px;
+    }
 }
