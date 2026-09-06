@@ -15,6 +15,36 @@ class PedidosController {
         }
     }
 
+    async buscarPorId(req, res) {
+        const id = Number(req.params.id);
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({
+                erro: "ID inválido."
+            });
+        }
+
+        try {
+            const pedido =
+                await pedidosService.getPedidoPorId(id);
+
+            if (!pedido) {
+                return res.status(404).json({
+                    erro: "Pedido não encontrado."
+                });
+            }
+
+            return res.status(200).json(pedido);
+
+        } catch (error) {
+            logError(error);
+
+            return res.status(500).json({
+                erro: "Não foi possível buscar o pedido."
+            });
+        }
+    }
+
     async listarConcluidos(req, res) {
         try {
             const pedidos = await pedidosService.getPedidosConcluidos();
@@ -37,21 +67,66 @@ class PedidosController {
         }
     }
 
-    async criarNovoPedido(req, res) {
-        const { pedido, cliente, email, telefone, sexualidade, foiAluno } = req.body;
+    async criarPedido(pedido) {
 
-        if (!pedido || !cliente || !email || !telefone || !sexualidade || typeof foiAluno !== 'boolean') {
-            throw new Error("Digite os campos corretamente!")
+        const ultimoPedido = await pool.query(
+            `SELECT codigo_pedido
+            FROM pedidos
+            WHERE codigo_pedido IS NOT NULL
+            ORDER BY id DESC
+            LIMIT 1`
+        );
+
+        let proximoNumero = 1;
+
+        if (ultimoPedido.rows.length > 0) {
+            const ultimoCodigo =
+                ultimoPedido.rows[0].codigo_pedido;
+
+            const numero = parseInt(
+                ultimoCodigo.replace("A", ""),
+                10
+            );
+
+            if (!isNaN(numero)) {
+                proximoNumero = numero + 1;
+            }
         }
 
-        try {
-            const novoPedido = await pedidosService.criarPedido(req.body);
+        const codigoPedido =
+            `A${String(proximoNumero).padStart(3, "0")}`;
 
-            return res.status(201).json(novoPedido);
-        } catch (error) {
-            console.error('Erro ao criar pedido:', error);
-            return res.status(500).json({ erro: 'Não foi possível criar o pedido.' });
-        }
+        const codigoRetirada =
+            String(Math.floor(1000 + Math.random() * 9000));
+
+        const resultado = await pool.query(
+            `INSERT INTO pedidos (
+                cliente,
+                email,
+                telefone,
+                sexualidade,
+                foi_aluno,
+                produto_id,
+                status,
+                codigo_pedido,
+                codigo_retirada
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            RETURNING *`,
+            [
+                pedido.cliente,
+                pedido.email,
+                pedido.telefone,
+                pedido.sexualidade,
+                pedido.foiAluno,
+                pedido.produtoId,
+                'pendente',
+                codigoPedido,
+                codigoRetirada
+            ]
+        );
+
+        return resultado.rows[0];
     }
 
     async concluirNovoPedido(req, res) {

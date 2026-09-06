@@ -5,11 +5,11 @@ import "./produtos2.scss";
 export default function Produtos2() {
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
 
-  function selecionarProduto(id) {
-    setProdutoSelecionado(id);
+  function selecionarProduto(produto) {
+    setProdutoSelecionado(produto);
   }
 
-  function enviarEscolha(event) {
+  async function enviarEscolha(event) {
     event.preventDefault();
 
     if (produtoSelecionado === null) {
@@ -17,40 +17,107 @@ export default function Produtos2() {
       return;
     }
 
-    console.log("Brinde escolhido:", produtoSelecionado);
+    console.log("Produto escolhido:", produtoSelecionado);
+
+    try {
+      const resposta = await fetch(
+        "http://localhost:3000/api/escolher-brinde",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            produtoId: produtoSelecionado.id,
+            nome: produtoSelecionado.nome,
+            descricao: produtoSelecionado.desc,
+          }),
+        }
+      );
+
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(
+          dados.mensagem || "Erro ao enviar escolha."
+        );
+      }
+
+      console.log("Escolha salva:", dados);
+
+      alert("Brinde escolhido com sucesso!");
+    } catch (erro) {
+      console.error("Erro:", erro);
+      alert("Não foi possível salvar sua escolha.");
+    }
   }
 
   return (
-    <form className="produtos-componente" onSubmit={enviarEscolha}>
-      {produtos.map((i) => (
-        <div
+    <form
+      className="produtos-componente"
+      onSubmit={enviarEscolha}
+    >
+      <div className="escolha">
+        <h3>ESCOLHA UM PRODUTO:</h3>
+
+        <p>
+          {produtos.length}{" "}
+          {produtos.length === 1 ? "ITEM" : "ITENS"}
+        </p>
+      </div>
+
+      {produtos.map((produto) => (
+        <button
+          type="button"
           className={`brinde ${
-            produtoSelecionado === i.id ? "selecionado" : ""
+            produtoSelecionado?.id === produto.id
+              ? "selecionado"
+              : ""
           }`}
-          key={i.id}
-          onClick={() => selecionarProduto(i.id)}
+          key={produto.id}
+          onClick={() => selecionarProduto(produto)}
+          aria-pressed={
+            produtoSelecionado?.id === produto.id
+          }
         >
           <div className="brinde-img">
-            <img src={i.img} alt={`Imagem do ${i.nome}`} />
+            <img
+              src={produto.img}
+              alt={`Imagem do ${produto.nome}`}
+            />
           </div>
 
           <div className="brinde-info">
-            <h2>{i.nome}</h2>
-            <p>{i.desc}</p>
+            <h2>{produto.nome}</h2>
+
+            <p>{produto.desc}</p>
           </div>
 
-          <input
-            type="radio"
-            name="brinde"
-            value={i.id}
-            checked={produtoSelecionado === i.id}
-            onChange={() => selecionarProduto(i.id)}
+          <div
+            className={`radio-personalizado ${
+              produtoSelecionado?.id === produto.id
+                ? "ativo"
+                : ""
+            }`}
+            aria-hidden="true"
           />
-        </div>
+        </button>
       ))}
 
-      <button className="enviar-escolha" type="submit">
-        Confirmar escolha
+      <div className="resumo-selecao">
+        <p>SELECIONADO</p>
+
+        <p>
+          {produtoSelecionado?.nome || "NENHUM"}
+        </p>
+      </div>
+
+      <button
+        className="enviar-escolha"
+        type="submit"
+      >
+        CONTINUAR
+        <i class="fa-solid fa-arrow-right-long"></i>
       </button>
     </form>
   );

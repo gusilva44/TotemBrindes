@@ -9,6 +9,7 @@ router.get('/health', (req, res) => {
 });
 
 router.get('/pedidos', pedidosController.listarTodos);
+router.get('/pedidos/:id', pedidosController.buscarPorId);
 router.get('/pedidos/pendentes', pedidosController.listarPendentes);
 router.get('/pedidos/concluidos', pedidosController.listarConcluidos);
 

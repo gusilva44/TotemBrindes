@@ -7,8 +7,12 @@ export default function Home(){
     return (
         <div className="home-page">
             <Header/>
+            <div className="entrada">
+                <h1>TOTEM DE BRINDES</h1>
+                <p>Escolha um brinde gratuitamente!</p>
+            </div>
             <Amostra />
-            <Link to='/cadastramento' className="cadastramento">Realizar cadastramento</Link>
+            <Link to='/cadastramento' className="cadastramento">Realizar cadastramento <i class="fa-solid fa-arrow-right-long"></i></Link>
         </div>
     )
 }

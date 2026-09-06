@@ -6,12 +6,35 @@ export default function Formulario() {
 
   function enviarFormulario(event) {
     event.preventDefault();
-    navigate("/pedido");
+
+    const formulario = new FormData(event.currentTarget);
+
+    const nome = formulario.get("nome");
+    const email = formulario.get("email");
+    const telefone = formulario.get("telefone");
+    const sexo = formulario.get("sexo");
+    const aluno = formulario.get("aluno");
+
+    const dadosCliente = {
+      cliente: nome,
+      email: email,
+      telefone: telefone,
+      sexualidade: sexo,
+      foiAluno: aluno === "sim",
+    };
+
+    sessionStorage.setItem(
+      "dadosCliente",
+      JSON.stringify(dadosCliente)
+    );
+
+    navigate("/pedidos");
   }
 
   return (
     <div className="cadastramento">
       <form onSubmit={enviarFormulario}>
+
         <div className="inputs">
           <label htmlFor="nome">Nome</label>
 
@@ -72,7 +95,9 @@ export default function Formulario() {
             <option value="">Selecione</option>
             <option value="sim">Sim</option>
             <option value="nao">Não</option>
-            <option value="pretendo">Pretendo ser</option>
+            <option value="pretendo">
+              Pretendo ser
+            </option>
           </select>
         </div>
 
@@ -81,6 +106,7 @@ export default function Formulario() {
           type="submit"
           value="Escolher Brinde"
         />
+
       </form>
     </div>
   );
