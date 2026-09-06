@@ -1,3 +1,5 @@
+import './produtoPedido.scss'
+
 export default function ProdutoPedido({ pedido }) {
   return (
     <div className="produto-pedido">

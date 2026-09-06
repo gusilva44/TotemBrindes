@@ -1,3 +1,5 @@
+import './botaoFinalizar.scss'
+
 export default function BotaoFinalizar({
   concluido,
   onClick

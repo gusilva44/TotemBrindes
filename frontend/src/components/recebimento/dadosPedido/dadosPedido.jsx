@@ -1,6 +1,9 @@
+import './dadosPedido.scss'
+
 export default function DadosPedido({ pedido }) {
   return (
     <>
+      <hr className="divisor" />
       <div className="informacao">
         <span>CÓDIGO DO PEDIDO</span>
 
@@ -8,8 +11,7 @@ export default function DadosPedido({ pedido }) {
           {pedido.codigo_pedido}
         </strong>
       </div>
-
-      <div className="divisor" />
+      <hr className="divisor" />
 
       <div className="informacao retirada">
         <span>CÓDIGO DE RETIRADA</span>
@@ -19,7 +21,7 @@ export default function DadosPedido({ pedido }) {
         </strong>
       </div>
 
-      <div className="divisor" />
+      <hr className="divisor" />
 
       <div className="cliente">
         <span>CLIENTE</span>
@@ -28,6 +30,8 @@ export default function DadosPedido({ pedido }) {
           {pedido.cliente}
         </strong>
       </div>
+
+      <hr className="divisor" />
     </>
   );
 }

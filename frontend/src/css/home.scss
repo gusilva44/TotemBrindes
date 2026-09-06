@@ -6,11 +6,37 @@ body {
   background-color: #264C90;
 
   .home-page {
-    height: 100VH;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+
+    .entrada {
+      display: flex;
+      width: 88%;
+      align-items: center;
+      gap: 5px;
+      justify-content: center;
+      flex-direction: column;
+
+      h1, p {
+        margin: 0px;
+        font-weight: bold;
+        color: white;
+        text-shadow: 1px 1px 1px black;
+      }
+
+      p {
+        padding-bottom: 25px;
+        font-size: 20px;
+      }
+
+      h1 {
+        padding-top: 25px;
+        font-size: 30px;
+      }
+    }
     
     .cadastramento {
       display: flex;
@@ -65,3 +91,12 @@ body {
   }
 }
 
+.home-page-carregando, .home-page-erro, .erro, .carregando {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: start;
+
+  color: white;
+}

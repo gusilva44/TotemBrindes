@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import Header from "../components/header/header";
+import Header from '../components/header/header'
 import CabecalhoPedido from '../components/recebimento/cabecalhoPedido/cabecalhoPedido'
 import DadosPedido from '../components/recebimento/dadosPedido/dadosPedido'
 import ProdutoPedido from '../components/recebimento/produtoPedido/produtoPedido'
@@ -24,7 +24,7 @@ export default function Recebimento() {
     async function buscarPedido() {
       try {
         const resposta = await fetch(
-          `http://localhost:3000/api/pedidos/${id}`
+          `http://localhost:3000/pedidos/${id}`
         );
 
         if (!resposta.ok) {
@@ -37,7 +37,6 @@ export default function Recebimento() {
         setCarregando(false);
         setErro(false);
 
-        // Para de consultar quando o pedido estiver concluído
         if (dados.status === "concluido") {
           clearInterval(intervalo);
         }
@@ -52,7 +51,6 @@ export default function Recebimento() {
 
     buscarPedido();
 
-    // Atualiza o pedido a cada 3 segundos
     intervalo = setInterval(buscarPedido, 3000);
 
     return () => {
@@ -124,15 +122,11 @@ export default function Recebimento() {
         <div className="cartao-pedido">
 
           <DadosPedido
-            codigoPedido={pedido.codigo_pedido}
-            codigoRetirada={pedido.codigo_retirada}
-            cliente={pedido.cliente}
+            pedido={pedido}
           />
 
           <ProdutoPedido
-            imagem={pedido.produto_imagem}
-            nome={pedido.produto_nome}
-            descricao={pedido.produto_descricao}
+            pedido={pedido}
           />
 
         </div>

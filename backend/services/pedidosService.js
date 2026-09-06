@@ -53,13 +53,13 @@ class PedidosService {
         return resultado.rows;
     }
 
-    async concluirPedido(id) {
+    async concluirPedido(codigo) {
         const resultado = await pool.query(
             `UPDATE pedidos
              SET status = $1
-             WHERE id = $2
+             WHERE codigo_retirada = $2
              RETURNING *`,
-            ['concluido', id]
+            ['concluido', codigo]
         );
 
         return resultado.rows[0];
@@ -89,6 +89,20 @@ class PedidosService {
             if (!isNaN(numero)) {
                 proximoNumero = numero + 1;
             }
+        }
+
+        const verificacao = await pool.query(
+            `SELECT * FROM pedidos
+            WHERE email = $1
+            AND telefone = $2`,
+            [
+                pedido.email,
+                pedido.telefone
+            ]
+        )
+
+        if(verificacao.rows > 0){
+            throw new Error("Usuário já existe")
         }
 
         const codigoPedido =
@@ -125,6 +139,32 @@ class PedidosService {
         );
 
         return resultado.rows[0];
+    }
+
+    async contagemService(){
+        const resultado = await pool.query(
+            `SELECT count(*) FROM pedidos`
+        )
+
+        return parseInt(resultado.rows[0].count, 10);
+    }
+
+    async contagemPendentesService(){
+        const resultado = await pool.query(
+            `SELECT count(*) FROM pedidos
+            WHERE status = 'pendente'`
+        )
+
+        return parseInt(resultado.rows[0].count, 10);
+    }
+
+    async contagemConcluidosService(){
+        const resultado = await pool.query(
+            `SELECT count(*) FROM pedidos
+            WHERE status = 'concluido'`
+        )
+
+        return parseInt(resultado.rows[0].count, 10);
     }
 }
 

@@ -1,9 +1,40 @@
-import { useState } from "react";
-import { produtos } from "../../data/produtos";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./produtos2.scss";
 
 export default function Produtos2() {
+  const navigate = useNavigate();
+
+  const [produtos, setProdutos] = useState([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    async function buscarProdutos() {
+      try {
+        const resposta = await fetch(
+          "http://localhost:3000/produtos"
+        );
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+          throw new Error(
+            dados.mensagem || "Erro ao buscar produtos."
+          );
+        }
+
+        setProdutos(dados);
+      } catch (erro) {
+        console.error("Erro ao buscar produtos:", erro);
+        alert("Não foi possível carregar os produtos.");
+      } finally {
+        setCarregando(false);
+      }
+    }
+
+    buscarProdutos();
+  }, []);
 
   function selecionarProduto(produto) {
     setProdutoSelecionado(produto);
@@ -12,16 +43,27 @@ export default function Produtos2() {
   async function enviarEscolha(event) {
     event.preventDefault();
 
-    if (produtoSelecionado === null) {
+    if (!produtoSelecionado) {
       alert("Selecione um brinde antes de continuar.");
       return;
     }
 
-    console.log("Produto escolhido:", produtoSelecionado);
+    const dadosCliente = JSON.parse(
+      sessionStorage.getItem("dadosCliente")
+    );
+
+    console.log("DADOS DO CLIENTE:", dadosCliente);
+    console.log("EMAIL:", dadosCliente?.email);
+
+    if (!dadosCliente) {
+      alert("Dados do cliente não encontrados.");
+      navigate("/");
+      return;
+    }
 
     try {
       const resposta = await fetch(
-        "http://localhost:3000/api/escolher-brinde",
+        "http://localhost:3000/pedidos",
         {
           method: "POST",
           headers: {
@@ -29,8 +71,11 @@ export default function Produtos2() {
           },
           body: JSON.stringify({
             produtoId: produtoSelecionado.id,
-            nome: produtoSelecionado.nome,
-            descricao: produtoSelecionado.desc,
+            cliente: dadosCliente.cliente,
+            email: dadosCliente.email,
+            telefone: dadosCliente.telefone,
+            sexualidade: dadosCliente.sexualidade,
+            foiAluno: dadosCliente.foiAluno
           }),
         }
       );
@@ -39,17 +84,22 @@ export default function Produtos2() {
 
       if (!resposta.ok) {
         throw new Error(
-          dados.mensagem || "Erro ao enviar escolha."
+          dados.mensagem || "Erro ao criar pedido."
         );
       }
 
-      console.log("Escolha salva:", dados);
+      console.log("Pedido criado:", dados);
 
-      alert("Brinde escolhido com sucesso!");
+      navigate(`/recebimento/${dados.id}`);
+
     } catch (erro) {
       console.error("Erro:", erro);
-      alert("Não foi possível salvar sua escolha.");
+      alert("Não foi possível criar o pedido.");
     }
+  }
+
+  if (carregando) {
+    return <p>Carregando produtos...</p>;
   }
 
   return (
@@ -82,7 +132,7 @@ export default function Produtos2() {
         >
           <div className="brinde-img">
             <img
-              src={produto.img}
+              src={produto.imagem}
               alt={`Imagem do ${produto.nome}`}
             />
           </div>
@@ -90,7 +140,7 @@ export default function Produtos2() {
           <div className="brinde-info">
             <h2>{produto.nome}</h2>
 
-            <p>{produto.desc}</p>
+            <p>{produto.descricao}</p>
           </div>
 
           <div
@@ -117,7 +167,7 @@ export default function Produtos2() {
         type="submit"
       >
         CONTINUAR
-        <i class="fa-solid fa-arrow-right-long"></i>
+        <i className="fa-solid fa-arrow-right-long"></i>
       </button>
     </form>
   );

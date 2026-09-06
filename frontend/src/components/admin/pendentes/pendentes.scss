@@ -1,0 +1,29 @@
+.pedidos-pendentes {
+    height: 99vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 42%;
+    border-right: 2px dashed black;
+
+    h1 {
+        font-size: 2.5em;
+        color: rgb(255, 155, 14);
+        text-shadow: 3px 3px 1px black;
+    }
+
+    .pedidos {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: 10px;
+
+        p {
+            font-size: 2em;
+        }
+
+        .pedido {
+            font-size: 2.5em;
+        }
+    }
+}

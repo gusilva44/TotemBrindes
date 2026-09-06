@@ -1,3 +1,5 @@
+import './cabecalhoPedido.scss'
+
 export default function CabecalhoPedido({ concluido }) {
   return (
     <div className="recebimento-topo">
@@ -9,8 +11,8 @@ export default function CabecalhoPedido({ concluido }) {
 
       <p>
         {concluido
-          ? "Seu pedido está pronto para retirada."
-          : "Aguarde enquanto seu pedido é preparado."}
+          ? "Seu pedido está pronto para retirada!"
+          : "Aguarde, enquanto seu pedido é preparado!"}
       </p>
     </div>
   );

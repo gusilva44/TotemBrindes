@@ -67,77 +67,30 @@ class PedidosController {
         }
     }
 
-    async criarPedido(pedido) {
+    async criarPedido(req, res) {
+        try {
+            const pedido = await pedidosService.criarPedido(req.body);
 
-        const ultimoPedido = await pool.query(
-            `SELECT codigo_pedido
-            FROM pedidos
-            WHERE codigo_pedido IS NOT NULL
-            ORDER BY id DESC
-            LIMIT 1`
-        );
+            return res.status(201).json(pedido);
 
-        let proximoNumero = 1;
+        } catch (error) {
+            logError(error);
 
-        if (ultimoPedido.rows.length > 0) {
-            const ultimoCodigo =
-                ultimoPedido.rows[0].codigo_pedido;
-
-            const numero = parseInt(
-                ultimoCodigo.replace("A", ""),
-                10
-            );
-
-            if (!isNaN(numero)) {
-                proximoNumero = numero + 1;
-            }
+            return res.status(500).json({
+                erro: 'Não foi possível criar o pedido.'
+            });
         }
-
-        const codigoPedido =
-            `A${String(proximoNumero).padStart(3, "0")}`;
-
-        const codigoRetirada =
-            String(Math.floor(1000 + Math.random() * 9000));
-
-        const resultado = await pool.query(
-            `INSERT INTO pedidos (
-                cliente,
-                email,
-                telefone,
-                sexualidade,
-                foi_aluno,
-                produto_id,
-                status,
-                codigo_pedido,
-                codigo_retirada
-            )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-            RETURNING *`,
-            [
-                pedido.cliente,
-                pedido.email,
-                pedido.telefone,
-                pedido.sexualidade,
-                pedido.foiAluno,
-                pedido.produtoId,
-                'pendente',
-                codigoPedido,
-                codigoRetirada
-            ]
-        );
-
-        return resultado.rows[0];
     }
 
     async concluirNovoPedido(req, res) {
-        const id = Number(req.params.id);
+        const codigo = Number(req.params.codigo);
 
-        if (!Number.isInteger(id) || id <= 0) {
-            throw new Error("O id do pedido deve ser positivo e inteiro")
+        if (!Number.isInteger(codigo) || codigo <= 0) {
+            throw new Error("O codigo do pedido deve ser positivo e inteiro")
         }
 
         try {
-            const pedido = await pedidosService.concluirPedido(id);
+            const pedido = await pedidosService.concluirPedido(codigo);
 
             if (!pedido) {
                 return res.status(404).json({ erro: 'Pedido não encontrado.' });
@@ -147,6 +100,23 @@ class PedidosController {
         } catch (error) {
             logError(error)
             return res.status(500).json({ erro: 'Não foi possível concluir o pedido.' });
+        }
+    }
+
+    async contagem(req, res) {
+        try {
+            const contagem = await pedidosService.contagemService()
+            const contagemPendentes = await pedidosService.contagemPendentesService()
+            const contagemConcluidos = await pedidosService.contagemConcluidosService()
+
+            res.status(200).json({
+                total: contagem,
+                pendentes: contagemPendentes,
+                concluidos: contagemConcluidos
+            })
+        } catch (error) {
+            logError(error)
+            res.status(500).json({ erro: "Não foi possível obter a contagem dos pedidos." })
         }
     }
 }

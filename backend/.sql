@@ -1,3 +1,4 @@
+-- Active: 1788707617383@@db.guarnz.com@5432@learning@public
 CREATE TABLE pedidos (
     id SERIAL PRIMARY KEY,
 
@@ -59,4 +60,3 @@ VALUES
     'Cartela de figurinhas com a temática de hardware',
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrNDV8RvKMFm3BYWtlmI2ADCKWXHVAQonbkhQTXimOkvND6r0FVTiTnq0m&s=10'
 );
-

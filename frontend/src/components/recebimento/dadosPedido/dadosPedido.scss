@@ -1,0 +1,36 @@
+.informacao, .cliente {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 92%;
+    align-items: center;
+    padding: 6px;
+    border-radius: 10px;
+    color: rgb(6, 6, 6);
+    background-color: #fffae8;
+    box-shadow: 0px 0px 8px 0px #00000052;
+
+    &:first-child {
+        margin-top: 10px;
+    }
+    
+    span {
+        font-size: 1.4em;
+    }
+
+    strong {
+        font-size: 1.4em;
+        color: #020094;
+        font-weight: bolder;
+    }
+}
+
+.divisor {
+    margin: 8px 0px;
+    background-color: white;
+    width: 92%;
+
+    &:last-child {
+        margin: 8px 0px 0px 0px;
+    }
+}

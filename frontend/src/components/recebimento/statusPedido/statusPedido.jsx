@@ -1,3 +1,5 @@
+import './statusPedido.scss'
+
 export default function StatusPedido({ concluido }) {
   return (
     <div

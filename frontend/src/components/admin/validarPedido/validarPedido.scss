@@ -1,0 +1,64 @@
+.validar-pedido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 90%;
+    gap: 8px;
+
+    h2 {
+        margin: 0;
+        padding-top: 10px;
+
+        color: white;
+        font-size: 1.2em;
+        text-shadow: 2px 2px 4px black;
+    }
+
+    input {
+        width: 100%;
+        box-sizing: border-box;
+
+        padding: 10px 12px;
+
+        border: 2px solid transparent;
+        border-radius: 8px;
+
+        outline: none;
+
+        font-size: 1em;
+        text-align: center;
+
+        transition: 0.2s;
+
+        &.erro {
+            border-color: #d90429;
+        }
+    }
+
+    .mensagem-erro {
+        width: 100%;
+        margin: 0;
+
+        color: #ffb3b3;
+        font-size: 0.9em;
+        text-align: center;
+    }
+
+    button {
+        width: 100%;
+
+        padding: 10px;
+
+        border: none;
+        border-radius: 8px;
+
+        background-color: rgb(255, 199, 14);
+        color: #1f2937;
+
+        font-size: 1em;
+        font-weight: bold;
+
+        cursor: pointer;
+    }
+}

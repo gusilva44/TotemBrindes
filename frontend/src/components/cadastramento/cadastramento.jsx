@@ -28,6 +28,8 @@ export default function Formulario() {
       JSON.stringify(dadosCliente)
     );
 
+    console.log(dadosCliente)
+
     navigate("/pedidos");
   }
 
