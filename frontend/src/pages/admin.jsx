@@ -24,9 +24,9 @@ export default function Admin() {
                 respostaConcluidos,
                 respostaContagem
             ] = await Promise.all([
-                fetch('http://localhost:3000/pedidos/pendentes'),
-                fetch('http://localhost:3000/pedidos/concluidos'),
-                fetch('http://localhost:3000/pedidos/contagem')
+                fetch('http://localhost:3001/pedidos/pendentes'),
+                fetch('http://localhost:3001/pedidos/concluidos'),
+                fetch('http://localhost:3001/pedidos/contagem')
             ])
 
             if (!respostaContagem.ok) {
@@ -78,13 +78,11 @@ export default function Admin() {
     async function validarPedido(codigo) {
         try {
             const resposta = await fetch(
-                `http://localhost:3000/pedidos/concluir/${codigo}`,
+                `http://localhost:3001/pedidos/concluir/${codigo}`,
                 {
                     method: 'PATCH'
                 }
             )
-
-            const dados = await resposta.json()
 
             if (!resposta.ok) {
                 return false

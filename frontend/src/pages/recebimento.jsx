@@ -24,7 +24,7 @@ export default function Recebimento() {
     async function buscarPedido() {
       try {
         const resposta = await fetch(
-          `http://localhost:3000/pedidos/${id}`
+          `http://localhost:3001/pedidos/${id}`
         );
 
         if (!resposta.ok) {

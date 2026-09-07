@@ -13,7 +13,7 @@ export default function Produtos2() {
     async function buscarProdutos() {
       try {
         const resposta = await fetch(
-          "http://localhost:3000/produtos"
+          "http://localhost:3001/produtos"
         );
 
         const dados = await resposta.json();
@@ -63,7 +63,7 @@ export default function Produtos2() {
 
     try {
       const resposta = await fetch(
-        "http://localhost:3000/pedidos",
+        "http://localhost:3001/pedidos",
         {
           method: "POST",
           headers: {

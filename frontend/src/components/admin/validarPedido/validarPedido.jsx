@@ -23,15 +23,6 @@ export default function ValidarPedido({ onValidar }) {
         }
     }
 
-    function alterarCodigo(e) {
-        setCodigo(e.target.value)
-
-        // Remove a mensagem assim que o usuário começar a digitar novamente
-        if (mensagem) {
-            setMensagem('')
-        }
-    }
-
     return (
         <form className="validar-pedido" onSubmit={enviar}>
             <h2>Validar pedido</h2>

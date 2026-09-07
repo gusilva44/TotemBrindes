@@ -12,7 +12,7 @@ export default function Home(){
     useEffect(() => {
         async function buscarBrindes() {
             try {
-                const resposta = await fetch('http://localhost:3000/produtos')
+                const resposta = await fetch('http://localhost:3001/produtos')
 
                 if(!resposta.ok){
                     throw new Error("Produtos não encontrados")
