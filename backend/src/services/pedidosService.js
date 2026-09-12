@@ -35,7 +35,8 @@ class PedidosService {
         const resultado = await pool.query(
             `SELECT * FROM pedidos
              WHERE status = $1
-             ORDER BY id DESC`,
+             ORDER BY id DESC
+             LIMIT 9`,
             ['concluido']
         );
 
@@ -46,7 +47,8 @@ class PedidosService {
         const resultado = await pool.query(
             `SELECT * FROM pedidos
              WHERE status = $1
-             ORDER BY id DESC`,
+             ORDER BY id DESC
+             LIMIT 9`,
             ['pendente']
         );
 
