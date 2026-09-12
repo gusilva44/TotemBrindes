@@ -4,6 +4,8 @@ import Cadastramento from './pages/cadastramento';
 import Pedidos from './pages/pedidos';
 import Recebimento from "./pages/recebimento";
 import Admin from './pages/admin';
+import ProtectedRoute from './components/auth/protectedRoute';
+import Fim from './pages/fim';
 
 export default function Router() {
     return (
@@ -11,9 +13,12 @@ export default function Router() {
             <Routes>
                 <Route path='/' element={<Home/>} />
                 <Route path='/cadastramento' element={<Cadastramento/>} />
-                <Route path='/pedidos' element={<Pedidos/>} />
+                <Route element={<ProtectedRoute />}>
+                    <Route path='/pedidos' element={<Pedidos/>} />
+                    <Route path='/recebimento/:id' element={<Recebimento/>} />
+                    <Route path='/finalizado' element={<Fim />} />
+                </Route>
                 <Route path='/admin' element={<Admin />} />
-                <Route path='/recebimento/:id' element={<Recebimento/>} />
             </Routes>
         </BrowserRouter>
     )

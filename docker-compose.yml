@@ -5,9 +5,12 @@ services:
       context: ./frontend
     container_name: frontend
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       - CHOKIDAR_USEPOLLING=true
+      # O .env do frontend é ignorado no build; defina a porta do CRA no container.
+      - PORT=3001
+      - HOST=0.0.0.0
     depends_on:
       - backend
     restart: unless-stopped
@@ -17,7 +20,7 @@ services:
       context: ./backend
     container_name: backend
     ports:
-      - "3001:3000"
+      - "3000:3000"
     env_file:
       - ./backend/.env
     restart: unless-stopped

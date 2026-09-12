@@ -96,7 +96,7 @@
  *               - cliente
  *               - email
  *               - telefone
- *               - sexualidade
+ *               - genero
  *               - foi_aluno
  *             properties:
  *               pedido:
@@ -111,9 +111,10 @@
  *               telefone:
  *                 type: string
  *                 example: 11999999999
- *               sexualidade:
+ *               genero:
  *                 type: string
- *                 example: Prefiro não informar
+ *                 enum: [masculino, feminino, nao-binario, outro, nao-informado]
+ *                 example: nao-informado
  *               foi_aluno:
  *                 type: boolean
  *                 example: true

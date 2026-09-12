@@ -7,4 +7,64 @@
     justify-content: space-between;
 
     background-color: white;
+
+    
+}
+
+
+.loginAdmin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    background-color: #264C90;
+
+    form {
+        background-color: rgba(255, 255, 255, 0.641);
+        height: auto;
+        padding: 20px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+
+        h1 {
+            font-size: 2.5em;
+            color: white;
+            text-shadow: 2px 2px 0px black;
+        }
+
+        label {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            
+            p {
+                font-size: 1.5em;
+                margin: 0px;
+                color: white;
+                text-shadow: 2px 2px black;
+            }
+
+            input {
+                font-size: 18px;
+                padding: 8px;
+                border-radius: 20px;
+                border: 1px solid black;
+                outline: none;
+            }
+        }
+
+
+        button {
+            border-radius: 10px;
+            border: none;
+            background-color: #102c5c;
+            color: orange;
+            font-size: 1.7em;
+            padding: 5px;
+            margin-top: 20px;
+        }
+    }
 }

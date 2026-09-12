@@ -57,9 +57,10 @@ const options = {
                             type: 'string',
                             example: '11999999999'
                         },
-                        sexualidade: {
+                        genero: {
                             type: 'string',
-                            example: 'Prefiro não informar'
+                            enum: ['masculino', 'feminino', 'nao-binario', 'outro', 'nao-informado'],
+                            example: 'nao-informado'
                         },
                         foi_aluno: {
                             type: 'boolean',

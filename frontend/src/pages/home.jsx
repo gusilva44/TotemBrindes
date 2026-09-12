@@ -12,7 +12,7 @@ export default function Home(){
     useEffect(() => {
         async function buscarBrindes() {
             try {
-                const resposta = await fetch('http://localhost:3001/produtos')
+                const resposta = await fetch('http://localhost:3000/produtos')
 
                 if(!resposta.ok){
                     throw new Error("Produtos não encontrados")
@@ -32,7 +32,7 @@ export default function Home(){
         }
 
         buscarBrindes()
-    })
+    }, [])
 
     if(carregando) {
         return (
@@ -68,7 +68,7 @@ export default function Home(){
                 <p>Escolha um brinde gratuitamente!</p>
             </div>
             <Amostra produtos={produtos}/>
-            <Link to='/cadastramento' className="cadastramento">Realizar cadastramento <i class="fa-solid fa-arrow-right-long"></i></Link>
+            <Link to='/cadastramento' className="cadastramento">Realizar cadastramento <i className="fa-solid fa-arrow-right-long"></i></Link>
         </div>
     )
 }

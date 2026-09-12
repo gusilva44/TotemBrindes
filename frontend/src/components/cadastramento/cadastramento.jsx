@@ -1,10 +1,13 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { salvarSessao } from "../../auth/session";
 import "./cadastramento.scss";
 
 export default function Formulario() {
   const navigate = useNavigate();
+  const [enviando, setEnviando] = useState(false);
 
-  function enviarFormulario(event) {
+  async function enviarFormulario(event) {
     event.preventDefault();
 
     const formulario = new FormData(event.currentTarget);
@@ -12,26 +15,50 @@ export default function Formulario() {
     const nome = formulario.get("nome");
     const email = formulario.get("email");
     const telefone = formulario.get("telefone");
-    const sexo = formulario.get("sexo");
+    const genero = formulario.get("genero");
     const aluno = formulario.get("aluno");
 
     const dadosCliente = {
       cliente: nome,
       email: email,
       telefone: telefone,
-      sexualidade: sexo,
+      genero: genero,
       foiAluno: aluno === "sim",
     };
 
-    sessionStorage.setItem(
-      "dadosCliente",
-      JSON.stringify(dadosCliente)
-    );
-
-    console.log(dadosCliente)
-
-    navigate("/pedidos");
+    setEnviando(true);
+    try {
+      const resposta = await fetch("http://localhost:3000/auth/cadastro", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dadosCliente),
+      });
+      const dados = await resposta.json();
+      if (!resposta.ok || !dados.accessToken) {
+        throw new Error(dados.erro || "Não foi possível validar o cadastro.");
+      }
+      salvarSessao(dados.accessToken);
+      navigate("/pedidos");
+    } catch (erro) {
+      alert(erro.message);
+    } finally {
+      setEnviando(false);
+    }
   }
+
+  const formatarTelefone = (valor) => {
+    const numeros = valor.replace(/\D/g, '').slice(0, 11);
+
+    if (numeros.length <= 2) {
+      return numeros.replace(/^(\d{0,2})/, '($1');
+    }
+
+    if (numeros.length <= 7) {
+      return numeros.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+    }
+
+    return numeros.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+  };
 
   return (
     <div className="cadastramento">
@@ -73,20 +100,22 @@ export default function Formulario() {
             placeholder="(11) 99999-9999"
             required
             autoComplete="tel"
+            onChange={(e) => {
+              e.target.value = formatarTelefone(e.target.value);
+            }}
           />
         </div>
 
         <div className="inputs">
-          <label htmlFor="sexo">Sexo</label>
+          <label htmlFor="genero">Gênero</label>
 
-          <select name="sexo" id="sexo" required>
+          <select name="genero" id="genero" required>
             <option value="">Selecione</option>
-            <option value="Homem">Homem</option>
-            <option value="Mulher">Mulher</option>
-            <option value="Outro">Outro</option>
-            <option value="nao-informado">
-              Prefiro não informar
-            </option>
+            <option value="masculino">Masculino</option>
+            <option value="feminino">Feminino</option>
+            <option value="não-binario">Não-binário</option>
+            <option value="outro">Outro</option>
+            <option value="nao-informado">Prefiro não responder</option>
           </select>
         </div>
 
@@ -106,7 +135,8 @@ export default function Formulario() {
         <input
           className="proximaPagina"
           type="submit"
-          value="Escolher Brinde"
+          value={enviando ? "Validando..." : "Escolher Brinde"}
+          disabled={enviando}
         />
 
       </form>

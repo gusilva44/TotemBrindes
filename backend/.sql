@@ -9,7 +9,7 @@ CREATE TABLE pedidos (
     email VARCHAR(150) NOT NULL,
     telefone VARCHAR(20) NOT NULL,
 
-    sexualidade VARCHAR(50) NOT NULL,
+    genero VARCHAR(50) NOT NULL,
     foi_aluno BOOLEAN NOT NULL,
 
     produto_id INTEGER NOT NULL,
@@ -27,12 +27,20 @@ CREATE TABLE pedidos (
         CHECK (status IN ('pendente', 'concluido'))
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS pedidos_email_normalizado_unico
+    ON pedidos (lower(email));
+CREATE UNIQUE INDEX IF NOT EXISTS pedidos_telefone_normalizado_unico
+    ON pedidos ((regexp_replace(telefone, '\D', '', 'g')))
+
 CREATE TABLE produtos (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
     descricao TEXT NOT NULL,
     imagem TEXT NOT NULL
 );
+
+select * from pedidos;
+
 
 INSERT INTO produtos (id, nome, descricao, imagem)
 VALUES

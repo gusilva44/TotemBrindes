@@ -1,10 +1,13 @@
 import Concluidos from '../components/admin/concluidos/concluidos'
 import Pendentes from '../components/admin/pendentes/pendentes'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import '../css/admin.scss'
 import Painel from '../components/admin/painel/painel'
+import Header from '../components/header/header';
 
 export default function Admin() {
+    const [chaveAdmin, setChaveAdmin] = useState('')
+    const [chaveDigitada, setChaveDigitada] = useState('')
     const [carregando, setCarregando] = useState(true)
     const [erro, setErro] = useState(false)
 
@@ -17,16 +20,17 @@ export default function Admin() {
         concluidos: 0
     })
 
-    async function buscarPedidos() {
+    const buscarPedidos = useCallback(async () => {
+        if (!chaveAdmin) return
         try {
             const [
                 respostaPendentes,
                 respostaConcluidos,
                 respostaContagem
             ] = await Promise.all([
-                fetch('http://localhost:3001/pedidos/pendentes'),
-                fetch('http://localhost:3001/pedidos/concluidos'),
-                fetch('http://localhost:3001/pedidos/contagem')
+                fetch('http://localhost:3000/pedidos/pendentes', { headers: { 'X-Admin-Key': chaveAdmin } }),
+                fetch('http://localhost:3000/pedidos/concluidos', { headers: { 'X-Admin-Key': chaveAdmin } }),
+                fetch('http://localhost:3000/pedidos/contagem', { headers: { 'X-Admin-Key': chaveAdmin } })
             ])
 
             if (!respostaContagem.ok) {
@@ -73,14 +77,15 @@ export default function Admin() {
         } finally {
             setCarregando(false)
         }
-    }
+    }, [chaveAdmin])
 
     async function validarPedido(codigo) {
         try {
             const resposta = await fetch(
-                `http://localhost:3001/pedidos/concluir/${codigo}`,
+                `http://localhost:3000/pedidos/concluir/${codigo}`,
                 {
-                    method: 'PATCH'
+                    method: 'PATCH',
+                    headers: { 'X-Admin-Key': chaveAdmin }
                 }
             )
 
@@ -109,7 +114,32 @@ export default function Admin() {
         return () => {
             clearInterval(intervalo)
         }
-    }, [])
+    }, [buscarPedidos])
+
+    if (!chaveAdmin) {
+        return (
+            <main className="loginAdmin">
+                <Header />
+                <div className="loginAdmin">
+                    <form className='chaveAdmin' onSubmit={(event) => { event.preventDefault(); setChaveAdmin(chaveDigitada); }}>
+                        <h1>Acesso administrativo</h1>
+                        <label htmlFor="chave-admin">
+                        <p>Chave do painel</p>
+                        <input
+                            id="chave-admin"
+                            type="password"
+                            value={chaveDigitada}
+                            onChange={(event) => setChaveDigitada(event.target.value)}
+                            required
+                            autoComplete="current-password"
+                            placeholder='Digite a senha de administrador'
+                        /></label>
+                        <button type="submit">Entrar</button>
+                    </form>
+                </div>
+            </main>
+        )
+    }
 
     if (carregando) {
         return (

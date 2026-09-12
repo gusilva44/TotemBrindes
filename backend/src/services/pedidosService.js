@@ -66,8 +66,21 @@ class PedidosService {
     }
 
     async criarPedido(pedido) {
+        const client = await pool.connect();
 
-        const ultimoPedido = await pool.query(
+        try {
+            await client.query('BEGIN');
+            // Serializa a verificação e a inserção. Isso fecha a brecha de dois cliques/requisições simultâneas.
+            await client.query('SELECT pg_advisory_xact_lock($1)', [5831701]);
+
+            const produto = await client.query('SELECT id FROM produtos WHERE id = $1', [pedido.produtoId]);
+            if (produto.rowCount === 0) {
+                const error = new Error('Produto não encontrado');
+                error.code = 'PRODUTO_INVALIDO';
+                throw error;
+            }
+
+            const ultimoPedido = await client.query(
             `SELECT codigo_pedido
             FROM pedidos
             WHERE codigo_pedido IS NOT NULL
@@ -91,32 +104,49 @@ class PedidosService {
             }
         }
 
-        const verificacao = await pool.query(
-            `SELECT * FROM pedidos
-            WHERE email = $1
-            AND telefone = $2`,
+            const verificacao = await client.query(
+            `SELECT id FROM pedidos
+            WHERE lower(email) = lower($1)
+            OR regexp_replace(telefone, '\\D', '', 'g') = $2
+            LIMIT 1`,
             [
                 pedido.email,
                 pedido.telefone
             ]
         )
 
-        if(verificacao.rows > 0){
-            throw new Error("Usuário já existe")
+            if (verificacao.rowCount > 0) {
+                const error = new Error('Usuário já possui pedido');
+                error.code = 'PEDIDO_JA_EXISTE';
+                throw error;
         }
 
         const codigoPedido =
             `A${String(proximoNumero).padStart(3, "0")}`;
 
-        const codigoRetirada =
-            String(Math.floor(1000 + Math.random() * 9000));
+        let codigoRetirada;
+        for (let tentativa = 0; tentativa < 10; tentativa += 1) {
+            const candidato = String(Math.floor(1000 + Math.random() * 9000));
+            const codigoEmUso = await client.query(
+                'SELECT 1 FROM pedidos WHERE codigo_retirada = $1',
+                [candidato]
+            );
+            if (codigoEmUso.rowCount === 0) {
+                codigoRetirada = candidato;
+                break;
+            }
+        }
 
-        const resultado = await pool.query(
+        if (!codigoRetirada) {
+            throw new Error('Não foi possível gerar um código de retirada único.');
+        }
+
+            const resultado = await client.query(
             `INSERT INTO pedidos (
                 cliente,
                 email,
                 telefone,
-                sexualidade,
+                genero,
                 foi_aluno,
                 produto_id,
                 status,
@@ -129,7 +159,7 @@ class PedidosService {
                 pedido.cliente,
                 pedido.email,
                 pedido.telefone,
-                pedido.sexualidade,
+                pedido.genero,
                 pedido.foiAluno,
                 pedido.produtoId,
                 'pendente',
@@ -138,7 +168,14 @@ class PedidosService {
             ]
         );
 
-        return resultado.rows[0];
+            await client.query('COMMIT');
+            return resultado.rows[0];
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
     }
 
     async contagemService(){

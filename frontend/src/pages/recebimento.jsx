@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { encerrarSessao, obterToken } from "../auth/session";
 
 import Header from '../components/header/header'
 import CabecalhoPedido from '../components/recebimento/cabecalhoPedido/cabecalhoPedido'
@@ -24,10 +25,16 @@ export default function Recebimento() {
     async function buscarPedido() {
       try {
         const resposta = await fetch(
-          `http://localhost:3001/pedidos/${id}`
+          `http://localhost:3000/pedidos/${id}`,
+          { headers: { Authorization: `Bearer ${obterToken()}` } }
         );
 
         if (!resposta.ok) {
+          if (resposta.status === 401) {
+            encerrarSessao();
+            navigate("/cadastramento", { replace: true });
+            return;
+          }
           throw new Error("Pedido não encontrado.");
         }
 
@@ -56,7 +63,7 @@ export default function Recebimento() {
     return () => {
       clearInterval(intervalo);
     };
-  }, [id]);
+  }, [id, navigate]);
 
   function sair() {
     if (!pedido) {
@@ -67,7 +74,10 @@ export default function Recebimento() {
       return;
     }
 
-    navigate("/");
+    navigate("/finalizado", {
+      replace: true,
+      state: { cliente: pedido.cliente }
+    });
   }
 
   if (carregando) {

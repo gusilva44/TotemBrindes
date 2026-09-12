@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { encerrarSessao, obterToken } from "../../auth/session";
 import "./produtos2.scss";
 
 export default function Produtos2() {
@@ -8,12 +9,13 @@ export default function Produtos2() {
   const [produtos, setProdutos] = useState([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const [carregando, setCarregando] = useState(true);
+  const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
     async function buscarProdutos() {
       try {
         const resposta = await fetch(
-          "http://localhost:3001/produtos"
+          "http://localhost:3000/produtos"
         );
 
         const dados = await resposta.json();
@@ -48,34 +50,21 @@ export default function Produtos2() {
       return;
     }
 
-    const dadosCliente = JSON.parse(
-      sessionStorage.getItem("dadosCliente")
-    );
+    const token = obterToken();
+    if (!token) return navigate("/cadastramento");
 
-    console.log("DADOS DO CLIENTE:", dadosCliente);
-    console.log("EMAIL:", dadosCliente?.email);
-
-    if (!dadosCliente) {
-      alert("Dados do cliente não encontrados.");
-      navigate("/");
-      return;
-    }
-
+    setEnviando(true);
     try {
       const resposta = await fetch(
-        "http://localhost:3001/pedidos",
+        "http://localhost:3000/pedidos",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             produtoId: produtoSelecionado.id,
-            cliente: dadosCliente.cliente,
-            email: dadosCliente.email,
-            telefone: dadosCliente.telefone,
-            sexualidade: dadosCliente.sexualidade,
-            foiAluno: dadosCliente.foiAluno
           }),
         }
       );
@@ -84,7 +73,7 @@ export default function Produtos2() {
 
       if (!resposta.ok) {
         throw new Error(
-          dados.mensagem || "Erro ao criar pedido."
+          dados.erro || "Erro ao criar pedido."
         );
       }
 
@@ -94,7 +83,13 @@ export default function Produtos2() {
 
     } catch (erro) {
       console.error("Erro:", erro);
-      alert("Não foi possível criar o pedido.");
+      if (erro.message.includes("Sessão")) {
+        encerrarSessao();
+        navigate("/cadastramento");
+      }
+      alert(erro.message || "Não foi possível criar o pedido.");
+    } finally {
+      setEnviando(false);
     }
   }
 
@@ -165,8 +160,9 @@ export default function Produtos2() {
       <button
         className="enviar-escolha"
         type="submit"
+        disabled={enviando || !produtoSelecionado}
       >
-        CONTINUAR
+        {enviando ? "ENVIANDO..." : "CONTINUAR"}
         <i className="fa-solid fa-arrow-right-long"></i>
       </button>
     </form>

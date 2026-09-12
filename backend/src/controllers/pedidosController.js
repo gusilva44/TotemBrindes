@@ -18,12 +18,6 @@ class PedidosController {
     async buscarPorId(req, res) {
         const id = Number(req.params.id);
 
-        if (!Number.isInteger(id) || id <= 0) {
-            return res.status(400).json({
-                erro: "ID inválido."
-            });
-        }
-
         try {
             const pedido =
                 await pedidosService.getPedidoPorId(id);
@@ -32,6 +26,10 @@ class PedidosController {
                 return res.status(404).json({
                     erro: "Pedido não encontrado."
                 });
+            }
+
+            if (pedido.email !== req.auth.cliente.email || pedido.telefone !== req.auth.cliente.telefone) {
+                return res.status(403).json({ erro: 'Você não tem acesso a este pedido.' });
             }
 
             return res.status(200).json(pedido);
@@ -69,12 +67,22 @@ class PedidosController {
 
     async criarPedido(req, res) {
         try {
-            const pedido = await pedidosService.criarPedido(req.body);
+            const pedido = await pedidosService.criarPedido({
+                ...req.auth.cliente,
+                produtoId: req.body.produtoId
+            });
 
             return res.status(201).json(pedido);
 
         } catch (error) {
             logError(error);
+
+            if (error.code === 'PEDIDO_JA_EXISTE') {
+                return res.status(409).json({ erro: 'Já existe um pedido para este cadastro.' });
+            }
+            if (error.code === 'PRODUTO_INVALIDO') {
+                return res.status(400).json({ erro: 'Produto inválido.' });
+            }
 
             return res.status(500).json({
                 erro: 'Não foi possível criar o pedido.'
