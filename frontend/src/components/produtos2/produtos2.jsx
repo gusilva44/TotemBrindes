@@ -39,6 +39,8 @@ export default function Produtos2() {
   }, []);
 
   function selecionarProduto(produto) {
+    if (Number(produto.estoque) <= 0) return;
+
     setProdutoSelecionado(produto);
   }
 
@@ -111,43 +113,53 @@ export default function Produtos2() {
         </p>
       </div>
 
-      {produtos.map((produto) => (
-        <button
-          type="button"
-          className={`brinde ${
-            produtoSelecionado?.id === produto.id
-              ? "selecionado"
-              : ""
-          }`}
-          key={produto.id}
-          onClick={() => selecionarProduto(produto)}
-          aria-pressed={
-            produtoSelecionado?.id === produto.id
-          }
-        >
-          <div className="brinde-img">
-            <img
-              src={produto.imagem}
-              alt={`Imagem do ${produto.nome}`}
-            />
-          </div>
+      {produtos.map((produto) => {
+        const esgotado = Number(produto.estoque) <= 0;
 
-          <div className="brinde-info">
-            <h2>{produto.nome}</h2>
-
-            <p>{produto.descricao}</p>
-          </div>
-
-          <div
-            className={`radio-personalizado ${
+        return (
+          <button
+            type="button"
+            className={`brinde ${
               produtoSelecionado?.id === produto.id
-                ? "ativo"
+                ? "selecionado"
                 : ""
-            }`}
-            aria-hidden="true"
-          />
-        </button>
-      ))}
+            } ${esgotado ? "esgotado" : ""}`}
+            key={produto.id}
+            onClick={() => selecionarProduto(produto)}
+            aria-pressed={produtoSelecionado?.id === produto.id}
+            disabled={esgotado}
+          >
+            {esgotado && (
+              <>
+                <span className="brinde-overlay" aria-hidden="true" />
+                <span className="selo-esgotado">ESGOTADO</span>
+              </>
+            )}
+
+            <div className="brinde-img">
+              <img
+                src={produto.imagem}
+                alt={`Imagem do ${produto.nome}`}
+              />
+            </div>
+
+            <div className="brinde-info">
+              <h2>{produto.nome}</h2>
+
+              <p>{produto.descricao}</p>
+            </div>
+
+            <div
+              className={`radio-personalizado ${
+                produtoSelecionado?.id === produto.id
+                  ? "ativo"
+                  : ""
+              }`}
+              aria-hidden="true"
+            />
+          </button>
+        );
+      })}
 
       <div className="resumo-selecao">
         <p>SELECIONADO</p>

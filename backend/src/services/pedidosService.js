@@ -72,13 +72,21 @@ class PedidosService {
 
         try {
             await client.query('BEGIN');
-            // Serializa a verificação e a inserção. Isso fecha a brecha de dois cliques/requisições simultâneas.
             await client.query('SELECT pg_advisory_xact_lock($1)', [5831701]);
 
-            const produto = await client.query('SELECT id FROM produtos WHERE id = $1', [pedido.produtoId]);
+            const produto = await client.query(
+                'SELECT id, estoque FROM produtos WHERE id = $1 FOR UPDATE',
+                [pedido.produtoId]
+            );
             if (produto.rowCount === 0) {
                 const error = new Error('Produto não encontrado');
                 error.code = 'PRODUTO_INVALIDO';
+                throw error;
+            }
+
+            if (produto.rows[0].estoque <= 0) {
+                const error = new Error('Produto esgotado');
+                error.code = 'PRODUTO_ESGOTADO';
                 throw error;
             }
 
@@ -143,7 +151,7 @@ class PedidosService {
             throw new Error('Não foi possível gerar um código de retirada único.');
         }
 
-            const resultado = await client.query(
+        const resultado = await client.query(
             `INSERT INTO pedidos (
                 cliente,
                 email,
@@ -169,6 +177,11 @@ class PedidosService {
                 codigoRetirada
             ]
         );
+
+            await client.query(
+                'UPDATE produtos SET estoque = estoque - 1 WHERE id = $1',
+                [pedido.produtoId]
+            );
 
             await client.query('COMMIT');
             return resultado.rows[0];

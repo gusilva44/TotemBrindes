@@ -36,35 +36,43 @@ CREATE TABLE produtos (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
     descricao TEXT NOT NULL,
+    estoque INT NOT NULL,
     imagem TEXT NOT NULL
 );
+
+drop table pedidos;
+drop Table produtos;
 
 select * from pedidos;
 
 
-INSERT INTO produtos (id, nome, descricao, imagem)
+INSERT INTO produtos (id, nome, descricao, estoque, imagem)
 VALUES
 (
     1,
     'Chaveiro GitHub',
     'Chaveiro da plataforma de tecnologia GitHub',
+    2,
     'https://www.chaveirosecanetas.com.br/image/cache/data/Metalicos/prof-ciencia-da-comp-500x500.jpg'
 ),
 (
     2,
     'Imã de Geladeira',
     'Imã de geladeira personalizado com estética de notebook',
+    2,
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT15Ex-ktLyO0N8FolGwiOkiiz_1EYzy35eW22vIHHvgg&s'
 ),
 (
     3,
     'Cartela de Figurinhas Software',
     'Cartela de figurinhas com a temática de software',
+    2,
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrNDV8RvKMFm3BYWtlmI2ADCKWXHVAQonbkhQTXimOkvND6r0FVTiTnq0m&s=10'
 ),
 (
     4,
     'Cartela de Figurinhas Hardware',
     'Cartela de figurinhas com a temática de hardware',
+    2,
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrNDV8RvKMFm3BYWtlmI2ADCKWXHVAQonbkhQTXimOkvND6r0FVTiTnq0m&s=10'
 );

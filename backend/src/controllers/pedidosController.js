@@ -83,6 +83,9 @@ class PedidosController {
             if (error.code === 'PRODUTO_INVALIDO') {
                 return res.status(400).json({ erro: 'Produto inválido.' });
             }
+            if (error.code === 'PRODUTO_ESGOTADO') {
+                return res.status(409).json({ erro: 'Este produto está esgotado.' });
+            }
 
             return res.status(500).json({
                 erro: 'Não foi possível criar o pedido.'

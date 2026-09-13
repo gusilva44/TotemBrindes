@@ -75,6 +75,8 @@
   background: #fffae8;
 
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 
   text-align: left;
 
@@ -109,6 +111,45 @@
     outline: 3px solid rgba(23, 61, 122, 0.3);
     outline-offset: 3px;
   }
+
+  &.esgotado {
+    cursor: not-allowed;
+
+    &:hover,
+    &:active {
+      transform: none;
+      background: #fffae8;
+      border-color: rgba(221, 221, 221, 0.9);
+      box-shadow: none;
+    }
+  }
+}
+
+.brinde-overlay {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+
+  background: rgba(31, 41, 55, 0.48);
+}
+
+.selo-esgotado {
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  right: 10px;
+
+  padding: 5px 8px;
+
+  border-radius: 999px;
+
+  background: #f97316;
+  color: #fff;
+
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.06em;
 }
 
 .brinde-img {
