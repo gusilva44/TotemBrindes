@@ -33,10 +33,14 @@ class PedidosService {
 
     async getPedidosConcluidos() {
         const resultado = await pool.query(
-            `SELECT * FROM pedidos
-             WHERE status = $1
-             ORDER BY id DESC
-             LIMIT 9`,
+            `SELECT
+                pedidos.*,
+                produtos.nome AS produto,
+                TO_CHAR(pedidos.criado_em, 'DD/MM/YYYY HH24:MI') AS horario_pedido
+             FROM pedidos
+             INNER JOIN produtos ON produtos.id = pedidos.produto_id
+             WHERE pedidos.status = $1
+             ORDER BY pedidos.id DESC`,
             ['concluido']
         );
 
@@ -45,10 +49,14 @@ class PedidosService {
 
     async getPedidosPendentes() {
         const resultado = await pool.query(
-            `SELECT * FROM pedidos
-             WHERE status = $1
-             ORDER BY id DESC
-             LIMIT 9`,
+            `SELECT
+                pedidos.*,
+                produtos.nome AS produto,
+                TO_CHAR(pedidos.criado_em, 'DD/MM/YYYY HH24:MI') AS horario_pedido
+             FROM pedidos
+             INNER JOIN produtos ON produtos.id = pedidos.produto_id
+             WHERE pedidos.status = $1
+             ORDER BY pedidos.id DESC`,
             ['pendente']
         );
 

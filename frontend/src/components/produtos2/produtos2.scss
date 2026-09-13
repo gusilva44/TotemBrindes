@@ -282,8 +282,11 @@
     &:last-child {
       font-weight: 
       bolder;
+      text-shadow: 1px 1px 0px black;
 
       text-align: right;
+
+      color: #f97316;
 
       overflow-wrap: anywhere;
     }

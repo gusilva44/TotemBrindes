@@ -4,6 +4,7 @@
     flex-direction: column;
     justify-content: start;
     margin-top: 10px;
+    gap: 10px;
 
     h1 {
         padding-top: 5px;
@@ -19,6 +20,7 @@
 
     p {
         color: white;
-        font-size: 1.1  em;
+        font-size: 1.2em;
+        padding-bottom: 5px;
     }
 }

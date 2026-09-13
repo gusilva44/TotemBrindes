@@ -19,6 +19,7 @@
       flex-direction: column;
       gap: 7px;
       width: 100%;
+      text-shadow: 2px 2px 0px black;
 
       label {
         font-size: 18px;
@@ -44,6 +45,11 @@
         outline: none;
 
         transition: 0.2s;
+
+        &:hover {
+          border-color: #ff9409;
+          box-shadow: 0 0 0 3px rgba(255, 148, 9, 0.2);
+        }
       }
 
       input:focus,
@@ -78,11 +84,16 @@
 
       cursor: pointer;
       transition: 0.2s;
-    }
 
-    .proximaPagina:active {
-      transform: scale(0.98);
-      background-color: #e98300;
+      &:hover {
+        background-color: #ffa023;
+        transform: translateY(-3px);
+      }
+
+      &:active {
+        transform: scale(0.98);
+        background-color: #e98300;
+      }
     }
   } 
 }

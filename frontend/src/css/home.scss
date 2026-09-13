@@ -35,7 +35,8 @@ body {
 
       h1 {
         padding-top: 25px;
-        font-size: 32px;
+        font-size: 31px;
+        text-align: center;
       }
     }
     
@@ -78,6 +79,7 @@ body {
         background: #123266;
 
         box-shadow: 0 6px 16px rgba(23, 61, 122, 0.2);
+        transform: translateY(-3px);
       }
 
       &:active {
