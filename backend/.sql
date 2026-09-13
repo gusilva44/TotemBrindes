@@ -44,6 +44,7 @@ drop table pedidos;
 drop Table produtos;
 
 select * from pedidos;
+select * from produtos; 
 
 
 INSERT INTO produtos (id, nome, descricao, estoque, imagem)
