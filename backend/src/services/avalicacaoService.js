@@ -1,10 +1,10 @@
-import pool from '../repository/db.js';
+import { con } from "../repository/db.js";
 
 class AvaliacaoService {
     async enviarAvaliacao(avaliacao) {
-        const resultado = await pool.query(
+        const [resultado] = await con.query(
             `INSERT INTO avaliacoes (cliente, avaliacao)
-             VALUES ($1, $2)
+             VALUES (?, ?)
             RETURNING *`,
             [
                 avaliacao.cliente,
@@ -12,7 +12,7 @@ class AvaliacaoService {
             ]
         );
 
-        return resultado.rows[0];
+        return resultado;
     }
 }
 export default new AvaliacaoService();

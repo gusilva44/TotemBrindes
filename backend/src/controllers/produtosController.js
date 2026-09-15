@@ -1,17 +1,17 @@
-import pool from '../repository/db.js';
+import { con } from "../repository/db.js"
 
 class ProdutosController {
     async buscarProdutos(req, res){
         try {
-            const resultado = await pool.query(
+            const [resultado] = await con.query(
                 "SELECT * FROM produtos ORDER BY id ASC"
             )
 
-            if(resultado.rows < 0){
+            if(resultado < 0){
                 throw new Error("Nenhum produto cadastrado")
             }
 
-            return res.status(200).json(resultado.rows)
+            return res.status(200).json(resultado)
         } catch (error) {
             console.error("Erro ao buscar os produtos: " + error)
 

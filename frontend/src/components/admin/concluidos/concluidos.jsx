@@ -1,15 +1,18 @@
 import './concluidos.scss'
 
 export default function Concluidos({ concluidos, detalhado = false }){
+    // Se não for detalhado, pega apenas os 12 primeiros. Se for detalhado, pega todos.
+    const pedidosExibidos = detalhado ? concluidos : concluidos.slice(0, 12);
+
     return(
         <div className="pedidos-concluidos">
             <h1>CONCLUIDOS</h1>
 
             <div className="pedidos">
-                {concluidos.length === 0 ? (
-                    <p>Nenhum pedido concluidos.</p>
+                {pedidosExibidos.length === 0 ? (
+                    <p>Nenhum pedido concluídos.</p>
                 ) : (
-                    concluidos.map((pedido) => detalhado ? (
+                    pedidosExibidos.map((pedido) => detalhado ? (
                         <article className='pedido pedido-detalhado' key={pedido.id}>
                             <strong>{pedido.cliente}</strong>
                             <span>Pedido: {pedido.produto || 'Produto não informado'}</span>
@@ -17,7 +20,11 @@ export default function Concluidos({ concluidos, detalhado = false }){
                         </article>
                     ) : (
                         <div className='pedido' key={pedido.id}>
-                            {pedido.codigo_pedido}
+                            <div className="codigo">{pedido.codigo_pedido}</div>
+                            <div className="descricao">
+                                <p>{pedido.produto}</p>
+                                <p>{pedido.cliente}</p>
+                            </div>
                         </div>
                     ))
                 )}

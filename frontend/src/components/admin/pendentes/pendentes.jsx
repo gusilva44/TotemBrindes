@@ -1,15 +1,17 @@
 import './pendentes.scss'
 
 export default function Pendentes({ pendentes, detalhado = false }){
+    const pedidosExibidos = detalhado ? pendentes : pendentes.slice(0, 12);
+
     return(
         <div className="pedidos-pendentes">
             <h1>PENDENTES</h1>
 
             <div className="pedidos">
-                {pendentes.length === 0 ? (
+                {pedidosExibidos.length === 0 ? (
                     <p>Nenhum pedido pendente.</p>
                 ) : (
-                    pendentes.map((pedido) => detalhado ? (
+                    pedidosExibidos.map((pedido) => detalhado ? (
                         <article className='pedido pedido-detalhado' key={pedido.id}>
                             <strong>{pedido.cliente}</strong>
                             <span>Pedido: {pedido.produto || 'Produto não informado'}</span>
@@ -17,7 +19,11 @@ export default function Pendentes({ pendentes, detalhado = false }){
                         </article>
                     ) : (
                         <div className='pedido' key={pedido.id}>
-                            {pedido.codigo_pedido}
+                            <div className="codigo">{pedido.codigo_pedido}</div>
+                            <div className="descricao">
+                                <p>{pedido.produto}</p>
+                                <p>{pedido.cliente}</p>
+                            </div>
                         </div>
                     ))
                 )}
