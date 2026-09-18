@@ -13,7 +13,7 @@ export default function Fim() {
         const redirecionamento = setTimeout(() => {
             encerrarSessao();
             navigate('/', { replace: true });
-        }, 15000);
+        }, 1500000);
 
         return () => clearTimeout(redirecionamento);
     }, [navigate]);
@@ -27,9 +27,9 @@ export default function Fim() {
         <div className="page-fim">
             <Header />
             <main className="mensagem-final">
-                <h1>Obrigado, <span className='cliente3'>{cliente}</span>, pela preferência!</h1>
-                <p>Volte sempre.</p>
-                <span className='msg'>Você voltará ao início em instantes.</span>
+                <h1>Obrigado, <span className='cliente3'>{cliente}</span>! Volte sempre!</h1>
+                <p>Agredeçemos pela paciência e sua presença!</p>
+                
                 <button type="button" onClick={voltarInicio}>
                     VOLTAR AO INÍCIO
                 </button>

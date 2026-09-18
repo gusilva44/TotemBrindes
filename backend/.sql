@@ -1,3 +1,4 @@
+-- Active: 1789471383031@@localhost@5432@learning
 DROP TABLE IF EXISTS pedidos;
 DROP TABLE IF EXISTS produtos;
 
@@ -60,28 +61,28 @@ VALUES
     'Chaveiro GitHub',
     'Chaveiro da plataforma de tecnologia GitHub',
     2,
-    '/imgs/git.jpeg'
+    '/imgs/git.png'
 ),
 (
     2,
     'Imã de Geladeira',
     'Imã de geladeira personalizado com estética de notebook',
     2,
-    '/imgs/ima.jpeg'
+    '/imgs/ima.png'
 ),
 (
     3,
     'Cartela de Figurinhas Software',
     'Cartela de figurinhas com a temática de software',
     2,
-    '/imgs/figs-s.jpeg'
+    '/imgs/figs-s.png'
 ),
 (
     4,
     'Cartela de Figurinhas Hardware',
     'Cartela de figurinhas com a temática de hardware',
     2,
-    '/imgs/figs-h.jpeg'
+    '/imgs/figs-h.png'
 );
 
 -- 6. Atualiza o contador da sequência SERIAL para evitar conflitos em novos INSERTs
@@ -90,3 +91,5 @@ SELECT setval(pg_get_serial_sequence('produtos', 'id'), COALESCE(MAX(id), 1)) FR
 -- 7. Consultas finais para verificação
 SELECT * FROM produtos;
 SELECT * FROM pedidos;
+
+DROP TABLE produtos;
