@@ -59,8 +59,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ vars.OCIR_NAMESPACE }}/totembrindes-${{ matrix.component }}
           tags: |
-            type=sha,prefix=sha-,format=short
             type=raw,value=latest
+            type=sha,prefix=sha-,format=short
 
       - uses: docker/build-push-action@v7
         id: build
