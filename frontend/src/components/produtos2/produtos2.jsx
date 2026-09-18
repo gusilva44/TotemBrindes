@@ -1,3 +1,4 @@
+import api from '../../api'
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { encerrarSessao, obterToken } from "../../auth/session";
@@ -15,7 +16,7 @@ export default function Produtos2() {
     async function buscarProdutos() {
       try {
         const resposta = await fetch(
-          "http://localhost:3000/produtos"
+          api('/produtos')
         );
 
         const dados = await resposta.json();
@@ -58,7 +59,7 @@ export default function Produtos2() {
     setEnviando(true);
     try {
       const resposta = await fetch(
-        "http://localhost:3000/pedidos",
+        api('/pedidos'),
         {
           method: "POST",
           headers: {

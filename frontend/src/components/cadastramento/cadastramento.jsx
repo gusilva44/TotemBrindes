@@ -1,3 +1,4 @@
+import api from '../../api'
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { salvarSessao } from "../../auth/session";
@@ -28,7 +29,7 @@ export default function Formulario() {
 
     setEnviando(true);
     try {
-      const resposta = await fetch("http://localhost:3000/auth/cadastro", {
+      const resposta = await fetch(api('/auth/cadastro'), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dadosCliente),

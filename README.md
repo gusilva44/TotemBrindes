@@ -27,11 +27,14 @@ O **Totem de Brindes** é uma solução *full-stack* desenvolvida para a gestão
 ## 📁 Estrutura do Projeto
 
 ```text
-TotemBrindes-main/
+TotemBrindes/
 ├── docker-compose.yml          # Arquivo de orquestração dos contêineres
+├── .github/
+│   └── workflows/              # CI: build e publicação das imagens
 ├── backend/                    # API Backend
 │   ├── Dockerfile              # Dockerfile do Backend
-│   ├── .env                    # Variáveis de ambiente (Backend)
+│   ├── .env.example            # Modelo das variáveis de ambiente
+│   ├── .sql                    # Script de criação do schema e seed
 │   ├── package.json            # Dependências do Backend
 │   └── src/
 │       ├── auth/               # Serviços de autenticação e geração de JWT
@@ -44,10 +47,12 @@ TotemBrindes-main/
 │       ├── utils/              # Funções utilitárias (formatação de datas, logs)
 │       └── server.js           # Ponto de entrada do servidor backend
 └── frontend/                   # Interface Frontend
-    ├── Dockerfile              # Dockerfile do Frontend
-    ├── .env                    # Variáveis de ambiente (PORT=3001)
+    ├── Dockerfile              # Dockerfile do Frontend (build + nginx)
+    ├── nginx.conf              # Configuração do nginx que serve o build
+    ├── .env.example            # Modelo das variáveis de ambiente
     ├── package.json            # Dependências do Frontend
-    └── public/                 # Arquivos estáticos e imagens do totem
+    ├── public/                 # Arquivos estáticos e imagens
+    └── src/                    # Componentes, páginas e estilos
 ```
 
 ---
@@ -93,7 +98,7 @@ A forma mais rápida de subir o ambiente completo (Backend + Frontend + Banco de
 3. **Acesse as aplicações:**
    - **Frontend:** `http://localhost:3001`
    - **Backend API:** `http://localhost:3000` (ou porta configurada)
-   - **Documentação Swagger:** `http://localhost:3000/api-docs` (ou rota correspondente)
+   - **Documentação Swagger:** `http://localhost:3000/docs`
 
 ---
 
@@ -109,21 +114,32 @@ A forma mais rápida de subir o ambiente completo (Backend + Frontend + Banco de
    ```bash
    npm install
    ```
-3. Configure as variáveis de ambiente criando/editando o arquivo `.env`:
+3. Crie o arquivo `.env` a partir do modelo e preencha os valores:
+   ```bash
+   cp .env.example .env
+   ```
    ```env
    PORT=3000
-   JWT_SECRET=sua_chave_secreta_aqui
+   NODE_ENV=development
+
    DB_HOST=localhost
-   DB_USER=seu_usuario
-   DB_PASS=sua_senha
-   DB_NAME=totembrindes
+   DB_PORT=5432
+   DB_USER=postgres
+   DB_PASSWORD=sua_senha
+   DB_DATABASE=totembrindes
+
+   JWT_SECRET=sua_chave_secreta_aqui
+   JWT_EXPIRES_IN_SECONDS=1800
+
+   ADMIN_API_KEY=chave_de_acesso_ao_painel_admin
+
+   CORS_ORIGIN=http://localhost:3001
    ```
-4. Execute os scripts SQL no seu banco de dados a partir dos arquivos presentes em `backend/src/.sql`.
+   Com `NODE_ENV=production` a aplicação não sobe sem `JWT_SECRET` definido.
+4. Execute o script SQL no seu banco de dados a partir do arquivo `backend/.sql`.
 5. Inicie o servidor:
    ```bash
    npm start
-   # ou para modo desenvolvimento:
-   npm run dev
    ```
 
 #### 2. Configurando e Executando o Frontend
@@ -136,10 +152,15 @@ A forma mais rápida de subir o ambiente completo (Backend + Frontend + Banco de
    ```bash
    npm install
    ```
-3. Verifique o arquivo `.env` para garantir a porta desejada:
+3. Crie o arquivo `.env` a partir do modelo:
+   ```bash
+   cp .env.example .env
+   ```
    ```env
    PORT=3001
+   REACT_APP_API_URL=http://localhost:3000
    ```
+   `REACT_APP_API_URL` só é usada em desenvolvimento. Em produção a aplicação usa o caminho relativo `/api`, resolvido pelo proxy reverso.
 4. Inicie a aplicação frontend:
    ```bash
    npm start

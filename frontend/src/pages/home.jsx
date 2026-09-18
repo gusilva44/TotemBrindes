@@ -1,3 +1,4 @@
+import api from '../api'
 import Header from "../components/header/header";
 import Amostra from '../components/amostra/amostra'
 import { Link } from 'react-router-dom'
@@ -12,7 +13,7 @@ export default function Home(){
     useEffect(() => {
         async function buscarBrindes() {
             try {
-                const resposta = await fetch('http://localhost:3000/produtos')
+                const resposta = await fetch(api('/produtos'))
 
                 if(!resposta.ok){
                     throw new Error("Produtos não encontrados")

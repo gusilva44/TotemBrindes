@@ -28,7 +28,7 @@ export default function Fim() {
             <Header />
             <main className="mensagem-final">
                 <h1>Obrigado, <span className='cliente3'>{cliente}</span>! Volte sempre!</h1>
-                <p>Agredeçemos pela paciência e sua presença!</p>
+                <p>Agradecemos pela paciência e sua presença!</p>
                 
                 <button type="button" onClick={voltarInicio}>
                     VOLTAR AO INÍCIO

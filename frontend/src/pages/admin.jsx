@@ -1,3 +1,4 @@
+import api from '../api'
 import Concluidos from '../components/admin/concluidos/concluidos'
 import Pendentes from '../components/admin/pendentes/pendentes'
 import { useCallback, useEffect, useState } from 'react'
@@ -31,7 +32,7 @@ export default function Admin() {
 
         try {
             const resposta = await fetch(
-                'http://localhost:3000/pedidos/contagem',
+                api('/pedidos/contagem'),
                 { headers: { 'X-Admin-Key': chaveDigitada } }
             )
 
@@ -56,9 +57,9 @@ export default function Admin() {
                 respostaConcluidos,
                 respostaContagem
             ] = await Promise.all([
-                fetch('http://localhost:3000/pedidos/pendentes', { headers: { 'X-Admin-Key': chaveAdmin } }),
-                fetch('http://localhost:3000/pedidos/concluidos', { headers: { 'X-Admin-Key': chaveAdmin } }),
-                fetch('http://localhost:3000/pedidos/contagem', { headers: { 'X-Admin-Key': chaveAdmin } })
+                fetch(api('/pedidos/pendentes'), { headers: { 'X-Admin-Key': chaveAdmin } }),
+                fetch(api('/pedidos/concluidos'), { headers: { 'X-Admin-Key': chaveAdmin } }),
+                fetch(api('/pedidos/contagem'), { headers: { 'X-Admin-Key': chaveAdmin } })
             ])
 
             if (!respostaContagem.ok) {
@@ -110,7 +111,7 @@ export default function Admin() {
     async function validarPedido(codigo) {
         try {
             const resposta = await fetch(
-                `http://localhost:3000/pedidos/concluir/${codigo}`,
+                api(`/pedidos/concluir/${codigo}`),
                 {
                     method: 'PATCH',
                     headers: { 'X-Admin-Key': chaveAdmin }

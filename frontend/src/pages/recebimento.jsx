@@ -1,3 +1,4 @@
+import api from '../api'
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { encerrarSessao, obterToken } from "../auth/session";
@@ -25,7 +26,7 @@ export default function Recebimento() {
     async function buscarPedido() {
       try {
         const resposta = await fetch(
-          `http://localhost:3000/pedidos/${id}`,
+          api(`/pedidos/${id}`),
           { headers: { Authorization: `Bearer ${obterToken()}` } }
         );
 
