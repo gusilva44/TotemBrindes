@@ -1,241 +1,212 @@
-import { con } from "../repository/db.js";
+import pool from '../repository/db.js'
 
 class PedidosService {
 
     async getTodosPedidos() {
-        const [resultado] = await con.query(
-            `SELECT * 
-             FROM pedidos 
+        const resultado = await pool.query(
+            `SELECT *
+             FROM pedidos
              ORDER BY id DESC`
-        );
+        )
 
-        return resultado;
+        return resultado
     }
 
 
     async getPedidoPorId(id) {
-        const [resultado] = await con.query(
-            `SELECT 
+        const resultado = await pool.query(
+            `SELECT
                 pedidos.*,
                 produtos.nome AS produto_nome,
                 produtos.descricao AS produto_descricao,
                 produtos.imagem AS produto_imagem
-            FROM pedidos
-            INNER JOIN produtos 
+             FROM pedidos
+             INNER JOIN produtos
                 ON pedidos.produto_id = produtos.id
-            WHERE pedidos.id = ?`,
+             WHERE pedidos.id = $1`,
             [id]
-        );
+        )
 
-        return resultado[0];
+        return resultado.rows[0]
     }
 
 
     async getPedidosConcluidos() {
-        const [resultado] = await con.query(
-            `SELECT 
+        const resultado = await pool.query(
+            `SELECT
                 pedidos.*,
                 produtos.nome AS produto,
-                DATE_FORMAT(
+                TO_CHAR(
                     pedidos.criado_em,
-                    '%d/%m/%Y %H:%i'
+                    'DD/MM/YYYY HH24:MI'
                 ) AS horario_pedido
              FROM pedidos
-             INNER JOIN produtos 
+             INNER JOIN produtos
                 ON produtos.id = pedidos.produto_id
-             WHERE pedidos.status = ?
+             WHERE pedidos.status = $1
              ORDER BY pedidos.id DESC`,
             ['concluido']
-        );
+        )
 
-        return resultado;
+        return resultado.rows
     }
 
 
     async getPedidosPendentes() {
-        const [resultado] = await con.query(
-            `SELECT 
+        const resultado = await pool.query(
+            `SELECT
                 pedidos.*,
                 produtos.nome AS produto,
-                DATE_FORMAT(
+                TO_CHAR(
                     pedidos.criado_em,
-                    '%d/%m/%Y %H:%i'
+                    'DD/MM/YYYY HH24:MI'
                 ) AS horario_pedido
              FROM pedidos
-             INNER JOIN produtos 
+             INNER JOIN produtos
                 ON produtos.id = pedidos.produto_id
-             WHERE pedidos.status = ?
+             WHERE pedidos.status = $1
              ORDER BY pedidos.id DESC`,
             ['pendente']
-        );
+        )
 
-        return resultado;
+        return resultado.rows
     }
 
 
     async concluirPedido(codigo) {
 
-        const [resultadoUpdate] = await con.query(
+        const resultadoUpdate = await pool.query(
             `UPDATE pedidos
-             SET 
-                status = ?,
+             SET
+                status = $1,
                 concluido_em = CURRENT_TIMESTAMP
-             WHERE codigo_retirada = ?
-             AND status = ?`,
+             WHERE codigo_retirada = $2
+             AND status = $3
+             RETURNING *`,
             [
                 'concluido',
                 codigo,
                 'pendente'
             ]
-        );
+        )
 
-        if (resultadoUpdate.affectedRows === 0) {
-            return null;
+        if (resultadoUpdate.rowCount === 0) {
+            return null
         }
 
-        const [resultado] = await con.query(
-            `SELECT *
-             FROM pedidos
-             WHERE codigo_retirada = ?`,
-            [codigo]
-        );
-
-        return resultado[0];
+        return resultadoUpdate.rows[0]
     }
 
 
     async criarPedido(pedido) {
 
-        const client = await con.getConnection();
+        const client = await pool.connect()
 
         try {
 
-            await client.beginTransaction();
-
-            /*
-             * Impede duas requisições simultâneas
-             * de criarem pedidos ao mesmo tempo.
-             */
-            await client.query(
-                "SELECT GET_LOCK('criar_pedido_lock', 10)"
-            );
-
-
-            /*
-             * Verifica o produto e bloqueia
-             * a linha durante a transação.
-             */
-            const [produtos] = await client.query(
-                `SELECT 
+            await client.query('BEGIN')
+            
+            const produtos = await client.query(
+                `SELECT
                     id,
                     estoque
                  FROM produtos
-                 WHERE id = ?
+                 WHERE id = $1
                  FOR UPDATE`,
                 [pedido.produtoId]
-            );
+            )
 
 
-            if (produtos.length === 0) {
+            if (produtos.rows.length === 0) {
 
                 const error = new Error(
                     'Produto não encontrado'
-                );
+                )
 
-                error.code = 'PRODUTO_INVALIDO';
+                error.code = 'PRODUTO_INVALIDO'
 
-                throw error;
+                throw error
             }
 
 
-            if (produtos[0].estoque <= 0) {
+            if (produtos.rows[0].estoque <= 0) {
 
                 const error = new Error(
                     'Produto esgotado'
-                );
+                )
 
-                error.code = 'PRODUTO_ESGOTADO';
+                error.code = 'PRODUTO_ESGOTADO'
 
-                throw error;
+                throw error
             }
 
-
-            /*
-             * Verifica se o usuário já fez um pedido.
-             */
-            const [verificacao] = await client.query(
+            const verificacao = await client.query(
                 `SELECT id
                  FROM pedidos
-                 WHERE LOWER(email) = LOWER(?)
+                 WHERE LOWER(email) = LOWER($1)
                  OR REGEXP_REPLACE(
                         telefone,
                         '[^0-9]',
-                        ''
+                        '',
+                        'g'
                     ) = REGEXP_REPLACE(
-                        ?,
+                        $2,
                         '[^0-9]',
-                        ''
+                        '',
+                        'g'
                     )
                  LIMIT 1`,
                 [
                     pedido.email,
                     pedido.telefone
                 ]
-            );
+            )
 
 
-            if (verificacao.length > 0) {
+            if (verificacao.rows.length > 0) {
 
                 const error = new Error(
                     'Usuário já possui pedido'
-                );
+                )
 
-                error.code = 'PEDIDO_JA_EXISTE';
+                error.code = 'PEDIDO_JA_EXISTE'
 
-                throw error;
+                throw error
             }
 
-
-            /*
-             * Descobre o próximo código do pedido.
-             */
-            const [ultimoPedido] = await client.query(
+            const ultimoPedido = await client.query(
                 `SELECT codigo_pedido
                  FROM pedidos
                  WHERE codigo_pedido IS NOT NULL
                  ORDER BY id DESC
                  LIMIT 1`
-            );
+            )
 
 
-            let proximoNumero = 1;
+            let proximoNumero = 1
 
 
-            if (ultimoPedido.length > 0) {
+            if (ultimoPedido.rows.length > 0) {
 
                 const ultimoCodigo =
-                    ultimoPedido[0].codigo_pedido;
+                    ultimoPedido.rows[0].codigo_pedido
 
                 const numero = parseInt(
-                    ultimoCodigo.replace("A", ""),
+                    ultimoCodigo.replace('A', ''),
                     10
-                );
+                )
 
 
                 if (!isNaN(numero)) {
-                    proximoNumero = numero + 1;
+                    proximoNumero = numero + 1
                 }
             }
 
 
             const codigoPedido =
-                `A${String(proximoNumero).padStart(3, "0")}`;
+                `A${String(proximoNumero).padStart(3, '0')}`
 
-
-            /*
-             * Gera código de retirada.
-             */
-            let codigoRetirada;
+            let codigoRetirada
 
 
             for (
@@ -249,23 +220,23 @@ class PedidosService {
                         Math.floor(
                             1000 + Math.random() * 9000
                         )
-                    );
+                    )
 
 
-                const [codigoEmUso] =
+                const codigoEmUso =
                     await client.query(
                         `SELECT 1
                          FROM pedidos
-                         WHERE codigo_retirada = ?`,
+                         WHERE codigo_retirada = $1`,
                         [candidato]
-                    );
+                    )
 
 
-                if (codigoEmUso.length === 0) {
+                if (codigoEmUso.rows.length === 0) {
 
-                    codigoRetirada = candidato;
+                    codigoRetirada = candidato
 
-                    break;
+                    break
                 }
             }
 
@@ -274,18 +245,14 @@ class PedidosService {
 
                 const error = new Error(
                     'Não foi possível gerar um código de retirada único.'
-                );
+                )
 
-                error.code = 'CODIGO_RETIRADA_ERRO';
+                error.code = 'CODIGO_RETIRADA_ERRO'
 
-                throw error;
+                throw error
             }
 
-
-            /*
-             * Cria o pedido.
-             */
-            const [insertResult] =
+            const insertResult =
                 await client.query(
                     `INSERT INTO pedidos (
                         cliente,
@@ -298,7 +265,11 @@ class PedidosService {
                         codigo_pedido,
                         codigo_retirada
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    VALUES (
+                        $1, $2, $3, $4, $5,
+                        $6, $7, $8, $9
+                    )
+                    RETURNING id`,
                     [
                         pedido.cliente,
                         pedido.email,
@@ -310,93 +281,83 @@ class PedidosService {
                         codigoPedido,
                         codigoRetirada
                     ]
-                );
+                )
 
 
-            /*
-             * Diminui o estoque.
-             */
+            const pedidoId = insertResult.rows[0].id
+
             await client.query(
                 `UPDATE produtos
                  SET estoque = estoque - 1
-                 WHERE id = ?`,
+                 WHERE id = $1`,
                 [pedido.produtoId]
-            );
+            )
 
+            await client.query('COMMIT')
 
-            /*
-             * Finaliza a transação.
-             */
-            await client.commit();
-
-
-            /*
-             * Busca o pedido criado.
-             */
-            const [novoPedido] =
-                await con.query(
-                    `SELECT *
+            const novoPedido =
+                await pool.query(
+                    `SELECT
+                        pedidos.*,
+                        produtos.nome AS produto_nome,
+                        produtos.descricao AS produto_descricao,
+                        produtos.imagem AS produto_imagem
                      FROM pedidos
-                     WHERE id = ?`,
-                    [insertResult.insertId]
-                );
+                     INNER JOIN produtos
+                        ON produtos.id = pedidos.produto_id
+                     WHERE pedidos.id = $1`,
+                    [pedidoId]
+                )
 
 
-            return novoPedido[0];
+            return novoPedido.rows[0]
 
         } catch (error) {
 
-            await client.rollback();
+            await client.query('ROLLBACK')
 
-            throw error;
+            throw error
 
         } finally {
 
-            /*
-             * Libera o lock do MySQL.
-             */
-            await client.query(
-                "SELECT RELEASE_LOCK('criar_pedido_lock')"
-            );
-
-            client.release();
+            client.release()
         }
     }
 
 
     async contagemService() {
 
-        const [resultado] = await con.query(
+        const resultado = await pool.query(
             `SELECT COUNT(*) AS total
              FROM pedidos`
-        );
+        )
 
-        return Number(resultado[0].total);
+        return Number(resultado.rows[0].total)
     }
 
 
     async contagemPendentesService() {
 
-        const [resultado] = await con.query(
+        const resultado = await pool.query(
             `SELECT COUNT(*) AS total
              FROM pedidos
              WHERE status = 'pendente'`
-        );
+        )
 
-        return Number(resultado[0].total);
+        return Number(resultado.rows[0].total)
     }
 
 
     async contagemConcluidosService() {
 
-        const [resultado] = await con.query(
+        const resultado = await pool.query(
             `SELECT COUNT(*) AS total
              FROM pedidos
              WHERE status = 'concluido'`
-        );
+        )
 
-        return Number(resultado[0].total);
+        return Number(resultado.rows[0].total)
     }
 }
 
-export default new PedidosService();
+export default new PedidosService()

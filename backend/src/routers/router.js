@@ -1,5 +1,4 @@
 import express from 'express';
-import avaliacaoController from '../controllers/avaliacaoController.js';
 import pedidosController from '../controllers/pedidosController.js';
 import produtosController from '../controllers/produtosController.js'
 import authController from '../controllers/authController.js';
@@ -26,7 +25,5 @@ router.get('/pedidos/:id', exigirAutenticacao, validarId, pedidosController.busc
 router.patch('/pedidos/concluir/:codigo', exigirAdministrador, pedidosController.concluirNovoPedido);
 
 router.get('/produtos', produtosController.buscarProdutos)
-
-router.post('/avaliacoes', avaliacaoController.criar);
 
 export default router;

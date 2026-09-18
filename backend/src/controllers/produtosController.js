@@ -1,9 +1,9 @@
-import { con } from "../repository/db.js"
+import pool from '../repository/db.js'
 
 class ProdutosController {
     async buscarProdutos(req, res){
         try {
-            const [resultado] = await con.query(
+            const resultado = await pool.query(
                 "SELECT * FROM produtos ORDER BY id ASC"
             )
 
@@ -12,6 +12,7 @@ class ProdutosController {
             }
 
             return res.status(200).json(resultado)
+
         } catch (error) {
             console.error("Erro ao buscar os produtos: " + error)
 

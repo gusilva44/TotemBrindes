@@ -6,6 +6,7 @@ import Recebimento from "./pages/recebimento";
 import Admin from './pages/admin';
 import ProtectedRoute from './components/auth/protectedRoute';
 import Fim from './pages/fim';
+import NotFound from './pages/notFound';
 
 export default function Router() {
     return (
@@ -19,6 +20,7 @@ export default function Router() {
                     <Route path='/finalizado' element={<Fim />} />
                 </Route>
                 <Route path='/admin' element={<Admin />} />
+                <Route path='*' element={<NotFound />} />
             </Routes>
         </BrowserRouter>
     )
