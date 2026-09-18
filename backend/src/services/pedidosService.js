@@ -9,7 +9,7 @@ class PedidosService {
              ORDER BY id DESC`
         )
 
-        return resultado
+        return resultado.rows
     }
 
 

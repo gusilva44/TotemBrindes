@@ -7,11 +7,7 @@ class ProdutosController {
                 "SELECT * FROM produtos ORDER BY id ASC"
             )
 
-            if(resultado < 0){
-                throw new Error("Nenhum produto cadastrado")
-            }
-
-            return res.status(200).json(resultado)
+            return res.status(200).json(resultado.rows)
 
         } catch (error) {
             console.error("Erro ao buscar os produtos: " + error)
