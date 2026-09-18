@@ -20,7 +20,7 @@ env:
   REGISTRY: gru.ocir.io
 
 jobs:
-  escolher:
+  setup:
     runs-on: ubuntu-latest
     outputs:
       components: ${{ steps.pick.outputs.components }}
@@ -37,12 +37,12 @@ jobs:
             core.setOutput('components', JSON.stringify(components))
 
   publish:
-    needs: escolher
+    needs: setup
     runs-on: ubuntu-24.04-arm
     strategy:
       fail-fast: false
       matrix:
-        component: ${{ fromJSON(needs.escolher.outputs.components) }}
+        component: ${{ fromJSON(needs.setup.outputs.components) }}
     steps:
       - uses: actions/checkout@v7
 
