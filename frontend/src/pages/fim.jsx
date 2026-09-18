@@ -13,7 +13,7 @@ export default function Fim() {
         const redirecionamento = setTimeout(() => {
             encerrarSessao();
             navigate('/', { replace: true });
-        }, 1500000);
+        }, 60000);
 
         return () => clearTimeout(redirecionamento);
     }, [navigate]);

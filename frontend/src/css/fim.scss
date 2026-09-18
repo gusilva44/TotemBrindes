@@ -1,58 +1,53 @@
 .page-fim {
-  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .mensagem-final {
-  min-height: calc(100vh - 80px);
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 6em;
+  justify-content: center;
   gap: 1rem;
   padding: 1rem;
+  box-sizing: border-box;
+
+  h1 {
+    font-size: 2.3em;
+    text-align: center;
+    margin: 0;
+    color: white;
+  }
 
   p {
     text-align: center;
-    margin: 0px;
-    font-size: 2em;
-    padding: 0px;
+    margin: 0;
+    font-size: 2.3rem;
     font-weight: bolder;
+    color: white;
     text-shadow: 2px 2px 0px black;
   }
-}
 
-.mensagem-final h1 {
-  font-size: 2.3em;
-  text-align: center;
-}
+  span.msg {
+    color: orange;
+    font-size: 2em;
+  }
 
-.mensagem-final h1,
-.mensagem-final p {
-  margin: 0;
-  color: white;
+  button {
+    margin-top: 1rem;
+    font-size: 1.2em;
+    padding: 0.5rem 0.8rem;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+  }
 }
 
 .cliente3 {
   color: orange;
   text-shadow: 2px 2px 0px black;
-  padding: 0px;
-}
-
-
-.mensagem-final p {
-  font-size: 2.3rem;
-}
-
-.mensagem-final span.msg {
-  color: orange;
-  font-size: 2em;
-}
-
-.mensagem-final button {
-  margin-top: 1rem;
-  font-size: 1.2em;
-  padding: 0.5rem 0.8rem;
-  border: 0;
-  border-radius: 6px;
-  cursor: pointer;
+  padding: 0;
 }
