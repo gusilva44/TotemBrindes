@@ -10,6 +10,15 @@
   margin-top: 6em;
   gap: 1rem;
   padding: 1rem;
+
+  p {
+    text-align: center;
+    margin: 0px;
+    font-size: 2em;
+    padding: 0px;
+    font-weight: bolder;
+    text-shadow: 2px 2px 0px black;
+  }
 }
 
 .mensagem-final h1 {
@@ -29,14 +38,6 @@
   padding: 0px;
 }
 
-p {
-  text-align: center;
-  margin: 0px;
-  font-size: 2em;
-  padding: 0px;
-  font-weight: bolder;
-  text-shadow: 2px 2px 0px black;
-}
 
 .mensagem-final p {
   font-size: 2.3rem;
