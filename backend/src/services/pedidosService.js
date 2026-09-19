@@ -1,4 +1,6 @@
 import pool from '../repository/db.js'
+import enviarMensagem from '../utils/whatsapp.js'
+import { pedidoCriado, pedidoConcluido } from '../utils/mensagens.js'
 
 class PedidosService {
 
@@ -96,7 +98,11 @@ class PedidosService {
             return null
         }
 
-        return resultadoUpdate.rows[0]
+        const pedido = resultadoUpdate.rows[0]
+
+        enviarMensagem(pedido.telefone, pedidoConcluido(pedido))
+
+        return pedido
     }
 
 
@@ -312,7 +318,11 @@ class PedidosService {
                 )
 
 
-            return novoPedido.rows[0]
+            const pedido = novoPedido.rows[0]
+
+            enviarMensagem(pedido.telefone, pedidoCriado(pedido))
+
+            return pedido
 
         } catch (error) {
 
