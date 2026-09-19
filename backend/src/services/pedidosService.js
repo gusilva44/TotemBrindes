@@ -318,11 +318,11 @@ class PedidosService {
                 )
 
 
-            const pedido = novoPedido.rows[0]
+            const pedidoCompleto = novoPedido.rows[0]
 
-            enviarMensagem(pedido.telefone, pedidoCriado(pedido))
+            enviarMensagem(pedidoCompleto.telefone, pedidoCriado(pedidoCompleto))
 
-            return pedido
+            return pedidoCompleto
 
         } catch (error) {
 
