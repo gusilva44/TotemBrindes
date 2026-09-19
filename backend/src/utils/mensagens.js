@@ -3,9 +3,9 @@ function primeiroNome(cliente) {
 }
 
 export function pedidoCriado(pedido) {
-    return `🎉 Parabéns ${primeiroNome(pedido.cliente)} 🎉, você acabou de realizar o seu pedido!!!
+    return `🎉 Parabéns ${primeiroNome(pedido.cliente)}, você acabou de realizar o seu pedido!!! 🎉
 
-➡️ Detalhes do pedido:
+Detalhes do pedido:
 
 Item: ${pedido.produto_nome}
 Código do Pedido: ${pedido.codigo_pedido}
