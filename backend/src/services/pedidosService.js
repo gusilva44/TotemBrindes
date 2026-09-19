@@ -44,7 +44,8 @@ class PedidosService {
              INNER JOIN produtos
                 ON produtos.id = pedidos.produto_id
              WHERE pedidos.status = $1
-             ORDER BY pedidos.id DESC`,
+             ORDER BY pedidos.id DESC
+             LIMIT 10`,
             ['concluido']
         )
 
@@ -65,7 +66,8 @@ class PedidosService {
              INNER JOIN produtos
                 ON produtos.id = pedidos.produto_id
              WHERE pedidos.status = $1
-             ORDER BY pedidos.id DESC`,
+             ORDER BY pedidos.id DESC
+             LIMIT 10`,
             ['pendente']
         )
 
